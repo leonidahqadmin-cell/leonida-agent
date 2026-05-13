@@ -127,6 +127,12 @@ def post_to_twitter(tweet_text):
         )
         response = client.create_tweet(text=tweet_text)
         return response.data["id"]
+    except tweepy.errors.Forbidden as e:
+        print(f"Twitter 403 Forbidden: App needs Read+Write permissions.")
+        print(f"Go to developer.twitter.com, set app permissions to Read+Write,")
+        print(f"then regenerate Access Token & Secret and update GitHub secrets.")
+        print(f"Details: {e}")
+        return None
     except Exception as e:
         print(f"Twitter error: {e}")
         return None
