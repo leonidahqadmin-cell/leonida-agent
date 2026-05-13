@@ -114,7 +114,7 @@ def publish_to_ghost(post):
             "mobiledoc": json.dumps({"version": "0.3.1", "atoms": [], "cards": [["html", {"html": post["html"]}]], "markups": [], "sections": [[10, 0]]}),
             "custom_excerpt": post["excerpt"],
             "status": "published",
-            "tags": [{"name": "GTA 6"}, {"name": "News"}]
+            "tags": [{"name": "GTA 6"}, {"name": "News"}], "feature_image": "https://source.unsplash.com/featured/1600x900/?GTA,gaming,city"
         }]
     }
     resp = requests.post(url, headers=headers, json=payload)
