@@ -22,7 +22,7 @@ def get_ghost_token():
     )
     return token
 
-FEEDS = [h
+FEEDS = [
     "https://news.google.com/rss/search?q=GTA+6+Grand+Theft+Auto+VI&hl=en-US&gl=US&ceid=US:en",
     "https://www.eurogamer.net/feed",
     "https://kotaku.com/rss",
