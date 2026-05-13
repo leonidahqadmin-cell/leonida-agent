@@ -22,7 +22,7 @@ def get_ghost_token():
     )
     return token
 
-FEEDS = [
+FEEDS = [h
     "https://news.google.com/rss/search?q=GTA+6+Grand+Theft+Auto+VI&hl=en-US&gl=US&ceid=US:en",
     "https://www.eurogamer.net/feed",
     "https://kotaku.com/rss",
@@ -81,7 +81,7 @@ Respond ONLY with valid JSON and nothing else. No markdown. No backticks. Just r
 {{"title": "your title here", "html": "your html here", "excerpt": "one sentence teaser"}}"""
 
     message = client.messages.create(
-        model="claude-sonnet-4-20250514",
+        model="claude-sonnet-4-5",
         max_tokens=2000,
         messages=[{"role": "user", "content": prompt}]
     )
