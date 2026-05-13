@@ -81,10 +81,10 @@ def generate_post(articles):
         "no invented facts, end with: Stay locked to LeonidaHQ for everything GTA 6.\n\n"
         "Also write a tweet under 250 chars teasing the article, ending with leonidahq.gg\n\n"
         "Respond ONLY with raw JSON (no markdown, no backticks):\n"
-        "{\"title\": \"...\", \"html\": \"...\", \"excerpt\": \"...\", \"tweet\": \"...\"}"
+        "{\"title\": \"...\", \"html\": \"...\", \"excerpht\": \"...\", \"tweet\": \"...\"}"
     )
     message = client.messages.create(
-        model="claude-3-haiku-20240307",
+        model="claude-3-5-haiku-20241022",
         max_tokens=2000,
         messages=[{"role": "user", "content": prompt}]
     )
