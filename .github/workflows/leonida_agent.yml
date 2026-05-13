@@ -1,0 +1,29 @@
+name: LeonidaHQ Auto-Post Agent
+
+on:
+  schedule:
+    - cron: '0 */4 * * *'   # Runs every 4 hours, 24/7
+  workflow_dispatch:          # Also lets you trigger it manually from GitHub
+
+jobs:
+  post:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: pip install anthropic feedparser PyJWT requests
+
+      - name: Run LeonidaHQ agent
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          GHOST_ADMIN_KEY: ${{ secrets.GHOST_ADMIN_KEY }}
+          GHOST_API_URL: ${{ secrets.GHOST_API_URL }}
+        run: python agent.py
