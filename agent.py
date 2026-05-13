@@ -19,7 +19,7 @@ def get_ghost_token():
     payload = {"iat": iat, "exp": iat + 300, "aud": "/admin/"}
     token = jwt.encode(
         payload,
-        bytes.fromhex(key_secret),h
+        bytes.fromhex(key_secret),
         algorithm="HS256",
         headers={"kid": key_id}
     )
