@@ -71,7 +71,7 @@ Here are today's GTA 6 headlines:
 Write a blog post covering the most interesting story from these headlines.
 
 Rules:
-- 400-600 words
+- 600-900 words
 - Punchy title
 - HTML body using only <p>, <h2>, <strong>, <ul> tags
 - Do not invent facts
@@ -82,7 +82,7 @@ Respond ONLY with valid JSON and nothing else. No markdown. No backticks. Just r
 
     message = client.messages.create(
         model="claude-sonnet-4-5",
-        max_tokens=2000,
+        max_tokens=3000,
         messages=[{"role": "user", "content": prompt}]
     )
 
@@ -111,7 +111,7 @@ def publish_to_ghost(post):
     payload = {
         "posts": [{
             "title": post["title"],
-            "html": post["html"],
+            "mobiledoc": json.dumps({"version": "0.3.1", "atoms": [], "cards": [["html", {"html": post["html"]}]], "markups": [], "sections": [[10, 0]]}),
             "custom_excerpt": post["excerpt"],
             "status": "published",
             "tags": [{"name": "GTA 6"}, {"name": "News"}]
