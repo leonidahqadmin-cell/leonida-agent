@@ -96,6 +96,7 @@ Respond ONLY with valid JSON, no markdown, no backticks:
     )
 
     raw = message.content[0].text.strip()
+            if '```' in raw: raw = raw.split('```')[1].lstrip('json').strip()
     return json.loads(raw)
 
 # ── Publish to Ghost ──────────────────────────────────────────────────────────
