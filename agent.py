@@ -19,7 +19,7 @@ def get_ghost_token():
     payload = {"iat": iat, "exp": iat + 300, "aud": "/admin/"}
     token = jwt.encode(
         payload,
-        bytes.fromhex(key_secret),
+        bytes.fromhex(key_secret),h
         algorithm="HS256",
         headers={"kid": key_id}
     )
@@ -90,7 +90,7 @@ Respond ONLY with valid JSON, no markdown, no backticks:
 {{"title": "...", "html": "...", "excerpt": "One sentence teaser under 150 chars."}}"""
 
     message = client.messages.create(
-        model="claude-sonnet-4-20250514",
+        model="claude-sonnet-4-5",
         max_tokens=2000,
         messages=[{"role": "user", "content": prompt}]
     )
