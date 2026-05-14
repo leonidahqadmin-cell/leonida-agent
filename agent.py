@@ -93,7 +93,7 @@ Respond ONLY with a raw JSON object. No markdown. No backticks. Just raw JSON:
 {{"title": "article title", "html": "html body", "excerpt": "one sentence teaser under 150 chars", "tweet": "tweet text under 250 chars"}}"""
 
     message = client.messages.create(
-        model="claude-sonnet-4-5",
+        model="claude-3-5-sonnet-20241022",
         max_tokens=2000,
         messages=[{"role": "user", "content": prompt}]
     )
@@ -140,10 +140,22 @@ def post_to_twitter(tweet_text):
             access_token=TWITTER_ACCESS_TOKEN,
             access_token_secret=TWITTER_ACCESS_TOKEN_SECRET
         )
+        print(f"Tweet content: {tweet_text}")
+        print(f"Tweet length: {len(tweet_text)}")
         response = client.create_tweet(text=tweet_text)
         return response.data["id"]
+    except tweepy.errors.Forbidden as e:
+        print(f"Twitter 403 FORBIDDEN - Full response:")
+        print(f"  API codes: {e.api_codes}")
+        print(f"  API messages: {e.api_messages}")
+        print(f"  API errors: {e.api_errors}")
+        print(f"  Response: {e.response.text if hasattr(e, "response") else "N/A"}")
+        return None
     except Exception as e:
+        print(f"Twitter error type: {type(e).__name__}")
         print(f"Twitter error: {e}")
+        if hasattr(e, "response") and e.response is not None:
+            print(f"Response text: {e.response.text}")
         return None
 
 def run():
