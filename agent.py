@@ -5,17 +5,10 @@ import feedparser
 import anthropic
 import os
 import jwt
-import tweepy
 
 GHOST_API_URL   = os.getenv("GHOST_API_URL",   "https://leonidahq.ghost.io")
 GHOST_ADMIN_KEY = os.getenv("GHOST_ADMIN_KEY", "")
 ANTHROPIC_KEY   = os.getenv("ANTHROPIC_API_KEY", "")
-
-TWITTER_API_KEY             = os.getenv("TWITTER_API_KEY", "")
-TWITTER_API_SECRET          = os.getenv("TWITTER_API_SECRET", "")
-TWITTER_ACCESS_TOKEN        = os.getenv("TWITTER_ACCESS_TOKEN", "")
-TWITTER_ACCESS_TOKEN_SECRET = os.getenv("TWITTER_ACCESS_TOKEN_SECRET", "")
-
 
 def get_ghost_token():
     key_id, key_secret = GHOST_ADMIN_KEY.split(":")
@@ -29,7 +22,6 @@ def get_ghost_token():
     )
     return token
 
-
 FEEDS = [
     "https://news.google.com/rss/search?q=GTA+6&hl=en-US&gl=US&ceid=US:en",
     "https://www.eurogamer.net/feed",
@@ -37,7 +29,6 @@ FEEDS = [
     "https://www.ign.com/rss/articles",
     "https://www.pcgamer.com/rss",
 ]
-
 
 def get_gta6_news():
     articles = []
@@ -66,7 +57,6 @@ def get_gta6_news():
             unique.append(a)
     return unique[:6]
 
-
 def generate_post(articles):
     client = anthropic.Anthropic(api_key=ANTHROPIC_KEY)
     news_block = "\n\n".join([
@@ -79,9 +69,8 @@ def generate_post(articles):
         "Write a blog post covering the most interesting story.\n"
         "Rules: 400-600 words, punchy title, HTML using only p h2 strong ul tags, "
         "no invented facts, end with: Stay locked to LeonidaHQ for everything GTA 6.\n\n"
-        "Also write a tweet under 250 chars teasing the article, ending with leonidahq.gg\n\n"
         "Respond ONLY with raw JSON (no markdown, no backticks):\n"
-        "{\"title\": \"...\", \"html\": \"...\", \"excerpht\": \"...\", \"tweet\": \"...\"}"
+        '{"title": "...", "html": "...", "excerpt": "..."}'
     )
     message = client.messages.create(
         model="claude-haiku-4-5",
@@ -91,10 +80,9 @@ def generate_post(articles):
     raw = message.content[0].text.strip()
     if raw.startswith("```"):
         raw = raw.split("\n", 1)[1] if "\n" in raw else raw[3:]
-        if raw.endswith("```"):
-            raw = raw[:-3].strip()
+    if raw.endswith("```"):
+        raw = raw[:-3].strip()
     return json.loads(raw)
-
 
 def publish_to_ghost(post):
     token = get_ghost_token()
@@ -116,28 +104,6 @@ def publish_to_ghost(post):
     resp = requests.post(url, headers=headers, json=payload)
     return resp.json()
 
-
-def post_to_twitter(tweet_text):
-    try:
-        client = tweepy.Client(
-            consumer_key=TWITTER_API_KEY,
-            consumer_secret=TWITTER_API_SECRET,
-            access_token=TWITTER_ACCESS_TOKEN,
-            access_token_secret=TWITTER_ACCESS_TOKEN_SECRET
-        )
-        response = client.create_tweet(text=tweet_text)
-        return response.data["id"]
-    except tweepy.errors.Forbidden as e:
-        print(f"Twitter 403 Forbidden: App needs Read+Write permissions.")
-        print(f"Go to developer.twitter.com, set app permissions to Read+Write,")
-        print(f"then regenerate Access Token & Secret and update GitHub secrets.")
-        print(f"Details: {e}")
-        return None
-    except Exception as e:
-        print(f"Twitter error: {e}")
-        return None
-
-
 def run():
     print("LeonidaHQ Agent - " + datetime.datetime.now().strftime("%Y-%m-%d %H:%M"))
     print("Scanning for GTA 6 news...")
@@ -147,7 +113,7 @@ def run():
         return
     print(f"Found {len(news)} articles")
     for a in news:
-        print("  -> " + a["title"][:80])
+        print(" -> " + a["title"][:80])
     print("Writing post with Claude...")
     post = generate_post(news)
     print("Title: " + post["title"])
@@ -157,16 +123,8 @@ def run():
         slug = result["posts"][0]["slug"]
         post_url = GHOST_API_URL + "/" + slug
         print("LIVE: " + post_url)
-        print("Posting to Twitter...")
-        tweet = post.get("tweet", "New post: " + post["title"] + " - leonidahq.gg")
-        tweet_id = post_to_twitter(tweet)
-        if tweet_id:
-            print("Tweeted: https://x.com/LeonidaHQgg/status/" + str(tweet_id))
-        else:
-            print("Tweet failed - post still published to Ghost")
     else:
         print("Ghost error: " + json.dumps(result, indent=2))
-
 
 if __name__ == "__main__":
     run()
