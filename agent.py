@@ -93,7 +93,7 @@ Respond ONLY with a raw JSON object. No markdown. No backticks. Just raw JSON:
 {{"title": "article title", "html": "html body", "excerpt": "one sentence teaser under 150 chars", "tweet": "tweet text under 250 chars"}}"""
 
     message = client.messages.create(
-        model="claude-3-5-sonnet-20241022",
+        model="claude-sonnet-4-5",
         max_tokens=2000,
         messages=[{"role": "user", "content": prompt}]
     )
